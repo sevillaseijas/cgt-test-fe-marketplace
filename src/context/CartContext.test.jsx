@@ -3,6 +3,10 @@ import { cartReducer } from './CartContext';
 const productA = { id: 'a', name: 'Product A', price: 10 };
 const productB = { id: 'b', name: 'Product B', price: 30 };
 
+beforeEach(() => {
+  localStorage.clear();
+});
+
 describe('cartReducer', () => {
   describe('ADD_ITEM', () => {
     it('adds a new item with quantity 1 when cart is empty', () => {
