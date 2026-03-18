@@ -1,30 +1,29 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { CartProvider } from './context/CartContext';
 import App from './App';
 
-test('renders home page by default', () => {
-  render(
-    <MemoryRouter initialEntries={['/']}>
-      <App />
+function renderApp(route) {
+  return render(
+    <MemoryRouter initialEntries={[route]}>
+      <CartProvider>
+        <App />
+      </CartProvider>
     </MemoryRouter>
   );
+}
+
+test('renders home page by default', () => {
+  renderApp('/');
   expect(screen.getByText(/welcome to our shop/i)).toBeInTheDocument();
 });
 
 test('renders product page for a given product id', () => {
-  render(
-    <MemoryRouter initialEntries={['/products/a']}>
-      <App />
-    </MemoryRouter>
-  );
+  renderApp('/products/a');
   expect(screen.getByText(/product a/i)).toBeInTheDocument();
 });
 
 test('renders cart page', () => {
-  render(
-    <MemoryRouter initialEntries={['/cart']}>
-      <App />
-    </MemoryRouter>
-  );
-  expect(screen.getByText(/ready to purchase/i)).toBeInTheDocument();
+  renderApp('/cart');
+  expect(screen.getByText(/your cart is empty/i)).toBeInTheDocument();
 });
