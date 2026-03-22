@@ -39,6 +39,13 @@ describe('cartReducer', () => {
       expect(state).toHaveLength(2);
       expect(state[1]).toEqual({ ...productB, quantity: 1 });
     });
+
+    it('increments only the matching item and leaves other items unchanged', () => {
+      const initial = [{ ...productA, quantity: 1 }, { ...productB, quantity: 2 }];
+      const state = cartReducer(initial, { type: 'ADD_ITEM', payload: productA });
+      expect(state[0].quantity).toBe(2);
+      expect(state[1].quantity).toBe(2);
+    });
   });
 
   describe('REMOVE_ITEM', () => {
@@ -53,6 +60,36 @@ describe('cartReducer', () => {
       const initial = [{ ...productB, quantity: 1 }];
       const state = cartReducer(initial, { type: 'REMOVE_ITEM', payload: productA });
       expect(state).toHaveLength(1);
+    });
+  });
+
+  describe('INCREMENT_ITEM', () => {
+    it('increments the quantity of the matching item by 1', () => {
+      const initial = [{ ...productA, quantity: 2 }, { ...productB, quantity: 1 }];
+      const state = cartReducer(initial, { type: 'INCREMENT_ITEM', payload: productA });
+      expect(state[0].quantity).toBe(3);
+      expect(state[1].quantity).toBe(1);
+    });
+  });
+
+  describe('DECREMENT_ITEM', () => {
+    it('decrements the quantity of the matching item by 1', () => {
+      const initial = [{ ...productA, quantity: 3 }];
+      const state = cartReducer(initial, { type: 'DECREMENT_ITEM', payload: productA });
+      expect(state[0].quantity).toBe(2);
+    });
+
+    it('removes the item when quantity reaches 0', () => {
+      const initial = [{ ...productA, quantity: 1 }];
+      const state = cartReducer(initial, { type: 'DECREMENT_ITEM', payload: productA });
+      expect(state).toHaveLength(0);
+    });
+
+    it('only decrements the target item and leaves others unchanged', () => {
+      const initial = [{ ...productA, quantity: 2 }, { ...productB, quantity: 1 }];
+      const state = cartReducer(initial, { type: 'DECREMENT_ITEM', payload: productA });
+      expect(state[0].quantity).toBe(1);
+      expect(state[1].quantity).toBe(1);
     });
   });
 

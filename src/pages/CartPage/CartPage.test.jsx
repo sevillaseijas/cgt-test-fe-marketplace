@@ -33,14 +33,14 @@ test('renders all catalog products and correct total when all are added to cart'
 
   renderCartPage();
 
-  expect(screen.getByText(/are you ready to purchase these/i)).toBeInTheDocument();
+  expect(screen.getByText(/your cart/i)).toBeInTheDocument();
 
   products.forEach((product) => {
     expect(screen.getByText(new RegExp(product.name, 'i'))).toBeInTheDocument();
   });
 
   expect(
-    screen.getByText(new RegExp(`total: ${expectedTotal} usd`, 'i'))
+    screen.getByText(new RegExp(`${expectedTotal} usd`, 'i'))
   ).toBeInTheDocument();
 });
 
@@ -53,6 +53,41 @@ test('removing the only item shows the empty state message', () => {
   expect(screen.getByText(new RegExp(firstProduct.name, 'i'))).toBeInTheDocument();
 
   userEvent.click(screen.getByRole('button', { name: /remove/i }));
+
+  expect(screen.getByText(/your cart is empty/i)).toBeInTheDocument();
+});
+
+test('clicking + increments the item quantity shown in the cart', () => {
+  const [firstProduct] = products;
+  localStorage.setItem('cart', JSON.stringify([{ ...firstProduct, quantity: 1 }]));
+
+  renderCartPage();
+
+  expect(screen.getByText('1')).toBeInTheDocument();
+
+  userEvent.click(screen.getByRole('button', { name: new RegExp(`increase quantity of ${firstProduct.name}`, 'i') }));
+
+  expect(screen.getByText('2')).toBeInTheDocument();
+});
+
+test('clicking − decrements the item quantity', () => {
+  const [firstProduct] = products;
+  localStorage.setItem('cart', JSON.stringify([{ ...firstProduct, quantity: 3 }]));
+
+  renderCartPage();
+
+  userEvent.click(screen.getByRole('button', { name: new RegExp(`decrease quantity of ${firstProduct.name}`, 'i') }));
+
+  expect(screen.getByText('2')).toBeInTheDocument();
+});
+
+test('clicking − when quantity is 1 removes the item and shows empty state', () => {
+  const [firstProduct] = products;
+  localStorage.setItem('cart', JSON.stringify([{ ...firstProduct, quantity: 1 }]));
+
+  renderCartPage();
+
+  userEvent.click(screen.getByRole('button', { name: new RegExp(`decrease quantity of ${firstProduct.name}`, 'i') }));
 
   expect(screen.getByText(/your cart is empty/i)).toBeInTheDocument();
 });
