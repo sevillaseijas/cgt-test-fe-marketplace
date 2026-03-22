@@ -1,0 +1,12 @@
+.product-page {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-5);
+}
+
+.product-page__not-found {
+  text-align: center;
+  padding: var(--space-10) 0;
+  font-size: 15px;
+  color: var(--color-muted);
+}

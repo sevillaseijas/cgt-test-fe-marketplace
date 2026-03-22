@@ -3,17 +3,20 @@ import Header from './components/Header/Header';
 import HomePage from './pages/HomePage/HomePage';
 import ProductPage from './pages/ProductPage/ProductPage';
 import CartPage from './pages/CartPage/CartPage';
+import './App.css';
 
 function App() {
   return (
-    <main>
+    <div className="app">
       <Header />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/products/:productId" element={<ProductPage />} />
-        <Route path="/cart" element={<CartPage />} />
-      </Routes>
-    </main>
+      <main className="app__content">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/products/:productId" element={<ProductPage />} />
+          <Route path="/cart" element={<CartPage />} />
+        </Routes>
+      </main>
+    </div>
   );
 }
 

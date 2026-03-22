@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
@@ -21,7 +21,7 @@ beforeEach(() => {
 
 test('renders home page by default', () => {
   renderApp('/');
-  expect(screen.getByText(/welcome to our shop/i)).toBeInTheDocument();
+  expect(screen.getByText(/timeless pieces/i)).toBeInTheDocument();
 });
 
 it.each(products)('renders product page for $name', (product) => {
@@ -43,9 +43,11 @@ test('adding a product updates the cart count in the header', () => {
   const firstProduct = products[0];
   renderApp(`/products/${firstProduct.id}`);
 
-  expect(screen.getByRole('link', { name: /cart \(0\)/i })).toBeInTheDocument();
+  // Badge is hidden when cart is empty (count === 0 renders no badge element)
+  expect(screen.queryByText('1')).not.toBeInTheDocument();
 
   userEvent.click(screen.getByRole('button', { name: /add to cart/i }));
 
-  expect(screen.getByRole('link', { name: /cart \(1\)/i })).toBeInTheDocument();
+  // Badge in the header shows the count (scoped to avoid matching qty controls in ProductCard)
+  expect(within(screen.getByRole('banner')).getByText('1')).toBeInTheDocument();
 });
